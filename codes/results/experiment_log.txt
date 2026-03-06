@@ -1,0 +1,49 @@
+============================================================
+Loading data...
+  Data shape: (3652, 35)
+  Sensors: 10 disp, 10 piez, 10 temp
+  Train: 1826 days, Val: 730 days, Test: 1096 days
+  Test anomaly rate: 75/1096 = 6.8%
+
+============================================================
+Running deterministic baselines...
+  Threshold: F1=0.770, Prec=1.000, Rec=0.627, FAR=0.000, AUC=0.858, Events=4/4
+  HST: F1=0.296, Prec=0.176, Rec=0.947, FAR=0.326, AUC=0.955, Events=4/4
+  Isolation Forest: F1=0.495, Prec=0.962, Rec=0.333, FAR=0.001, AUC=0.756, Events=1/4
+
+############################################################
+  SEED RUN 1/5: seed=42
+############################################################
+
+============================================================
+  SEED 42
+============================================================
+  [seed=42] Training PINN...
+    Training PINN for displacement (10 sensors)...
+  [displacement] Epoch 100/200: data=0.201433, physics=0.488419
+  [displacement] Epoch 200/200: data=0.201747, physics=0.453900
+    Training PINN for piezometer (10 sensors)...
+  [piezometer] Epoch 100/200: data=0.127224, physics=0.160480
+  [piezometer] Epoch 200/200: data=0.101205, physics=0.200793
+    Training PINN for temperature (10 sensors)...
+  [temperature] Epoch 100/200: data=0.695055, physics=0.037585
+  [temperature] Epoch 200/200: data=0.687355, physics=0.058049
+  PINN (Physics): F1=0.774, Prec=0.855, Rec=0.707, FAR=0.009, AUC=0.843, Events=4/4
+  [seed=42] Training GAT-LSTM...
+  [GAT-LSTM] Epoch 10/30: loss=0.047130
+  [GAT-LSTM] Epoch 20/30: loss=0.037831
+  [GAT-LSTM] Epoch 30/30: loss=0.035040
+  GAT-LSTM (Data): F1=0.583, Prec=0.432, Rec=0.893, FAR=0.086, AUC=0.948, Events=4/4
+  [seed=42] Running Knowledge Layer...
+  Knowledge Layer: F1=0.547, Prec=0.437, Rec=0.733, FAR=0.070, AUC=0.841, Events=4/4
+  [seed=42] Running DS Fusion...
+    physics: sigmoid center=4.343, slope=3.230
+    data: sigmoid center=6.061, slope=2.332
+    PINN test scores: mean=2.792, max=29.269, P99=24.162
+    GAT  test scores: mean=5.281, max=61.169, P99=49.101
+    Fused threshold: 0.3533 (val max=0.1163, val mean=0.001424, single-source bound=0.3333)
+  Proposed Framework: F1=0.828, Prec=1.000, Rec=0.707, FAR=0.000, AUC=0.945, Events=4/4
+  [seed=42] Ablation studies...
+  Ablation: No Physics: F1=0.375, Prec=0.235, Rec=0.920, FAR=0.219, AUC=0.948, Events=4/4
+  Ablation: No Data: F1=0.702, Prec=0.697, Rec=0.707, FAR=0.023, AUC=0.843, Events=4/4
+  [seed=42] Training LSTM-AE...

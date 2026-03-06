@@ -1,0 +1,182 @@
+{
+  "D01": {
+    "type": "displacement",
+    "elevation": 185.0,
+    "monolith": 1,
+    "direction": "upstream-downstream"
+  },
+  "D02": {
+    "type": "displacement",
+    "elevation": 150.0,
+    "monolith": 1,
+    "direction": "upstream-downstream"
+  },
+  "D03": {
+    "type": "displacement",
+    "elevation": 120.0,
+    "monolith": 1,
+    "direction": "upstream-downstream"
+  },
+  "D04": {
+    "type": "displacement",
+    "elevation": 185.0,
+    "monolith": 2,
+    "direction": "upstream-downstream"
+  },
+  "D05": {
+    "type": "displacement",
+    "elevation": 150.0,
+    "monolith": 2,
+    "direction": "upstream-downstream"
+  },
+  "D06": {
+    "type": "displacement",
+    "elevation": 120.0,
+    "monolith": 2,
+    "direction": "upstream-downstream"
+  },
+  "D07": {
+    "type": "displacement",
+    "elevation": 185.0,
+    "monolith": 3,
+    "direction": "upstream-downstream"
+  },
+  "D08": {
+    "type": "displacement",
+    "elevation": 150.0,
+    "monolith": 3,
+    "direction": "upstream-downstream"
+  },
+  "D09": {
+    "type": "displacement",
+    "elevation": 185.0,
+    "monolith": 1,
+    "direction": "cross-river"
+  },
+  "D10": {
+    "type": "displacement",
+    "elevation": 185.0,
+    "monolith": 3,
+    "direction": "cross-river"
+  },
+  "P01": {
+    "type": "piezometer",
+    "elevation": 50.0,
+    "monolith": 1,
+    "depth": "foundation"
+  },
+  "P02": {
+    "type": "piezometer",
+    "elevation": 50.0,
+    "monolith": 2,
+    "depth": "foundation"
+  },
+  "P03": {
+    "type": "piezometer",
+    "elevation": 50.0,
+    "monolith": 3,
+    "depth": "foundation"
+  },
+  "P04": {
+    "type": "piezometer",
+    "elevation": 80.0,
+    "monolith": 1,
+    "depth": "gallery"
+  },
+  "P05": {
+    "type": "piezometer",
+    "elevation": 80.0,
+    "monolith": 2,
+    "depth": "gallery"
+  },
+  "P06": {
+    "type": "piezometer",
+    "elevation": 80.0,
+    "monolith": 3,
+    "depth": "gallery"
+  },
+  "P07": {
+    "type": "piezometer",
+    "elevation": 30.0,
+    "monolith": 1,
+    "depth": "deep_foundation"
+  },
+  "P08": {
+    "type": "piezometer",
+    "elevation": 30.0,
+    "monolith": 2,
+    "depth": "deep_foundation"
+  },
+  "P09": {
+    "type": "piezometer",
+    "elevation": 30.0,
+    "monolith": 3,
+    "depth": "deep_foundation"
+  },
+  "P10": {
+    "type": "piezometer",
+    "elevation": 65.0,
+    "monolith": 2,
+    "depth": "curtain"
+  },
+  "T01": {
+    "type": "temperature",
+    "elevation": 180.0,
+    "monolith": 1,
+    "location": "upstream_face"
+  },
+  "T02": {
+    "type": "temperature",
+    "elevation": 180.0,
+    "monolith": 2,
+    "location": "upstream_face"
+  },
+  "T03": {
+    "type": "temperature",
+    "elevation": 180.0,
+    "monolith": 3,
+    "location": "upstream_face"
+  },
+  "T04": {
+    "type": "temperature",
+    "elevation": 130.0,
+    "monolith": 1,
+    "location": "core"
+  },
+  "T05": {
+    "type": "temperature",
+    "elevation": 130.0,
+    "monolith": 2,
+    "location": "core"
+  },
+  "T06": {
+    "type": "temperature",
+    "elevation": 130.0,
+    "monolith": 3,
+    "location": "core"
+  },
+  "T07": {
+    "type": "temperature",
+    "elevation": 80.0,
+    "monolith": 1,
+    "location": "downstream_face"
+  },
+  "T08": {
+    "type": "temperature",
+    "elevation": 80.0,
+    "monolith": 2,
+    "location": "downstream_face"
+  },
+  "T09": {
+    "type": "temperature",
+    "elevation": 80.0,
+    "monolith": 3,
+    "location": "downstream_face"
+  },
+  "T10": {
+    "type": "temperature",
+    "elevation": 50.0,
+    "monolith": 2,
+    "location": "foundation"
+  }
+}

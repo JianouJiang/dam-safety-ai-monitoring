@@ -1,0 +1,36 @@
+[
+  {
+    "type": "seepage_increase",
+    "start_day": 2656,
+    "duration_days": 30,
+    "magnitude": 18.0,
+    "monolith_sensors": [
+      1,
+      2,
+      4,
+      5,
+      7,
+      8
+    ]
+  },
+  {
+    "type": "differential_settlement",
+    "start_day": 2806,
+    "duration_days": 20,
+    "magnitude": 5.0,
+    "monolith": 2
+  },
+  {
+    "type": "thermal_crack",
+    "start_day": 2956,
+    "duration_days": 10,
+    "magnitude": 10.0,
+    "monolith": 1
+  },
+  {
+    "type": "uplift_increase",
+    "start_day": 3106,
+    "duration_days": 15,
+    "magnitude": 12.0
+  }
+]

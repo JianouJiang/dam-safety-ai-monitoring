@@ -1,2 +1,249 @@
-%% References — to be populated by Librarian agent
-%% Each entry should include DOI and a comment explaining relevance
+%% References for Dam Safety AI paper
+%% Target: Engineering Structures (Elsevier)
+
+%% ===== FOUNDATIONAL PAPERS =====
+
+@article{mata2011interpretation,
+  title={Interpretation of concrete dam behaviour with artificial neural network and multiple linear regression models},
+  author={Mata, Jos{\'e}},
+  journal={Engineering Structures},
+  volume={33},
+  number={3},
+  pages={903--910},
+  year={2011},
+  publisher={Elsevier},
+  doi={10.1016/j.engstruct.2010.12.011}
+}
+%% Relevance: Establishes ML for dam displacement prediction; HST baseline
+
+@article{raissi2019physics,
+  title={Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations},
+  author={Raissi, Maziar and Perdikaris, Paris and Karniadakis, George Em},
+  journal={Journal of Computational Physics},
+  volume={378},
+  pages={686--707},
+  year={2019},
+  publisher={Elsevier},
+  doi={10.1016/j.jcp.2018.10.045}
+}
+%% Relevance: PINN foundation paper; our physics layer builds on this
+
+@article{su2011study,
+  title={Study on an intelligent inference engine in early-warning system of dam health},
+  author={Su, Huaizhi and Wen, Zhiping and Wu, Zhongru},
+  journal={Water Resources Management},
+  volume={25},
+  number={6},
+  pages={1545--1563},
+  year={2011},
+  publisher={Springer},
+  doi={10.1007/s11269-010-9760-3}
+}
+%% Relevance: Early expert system for dam safety; knowledge layer lineage
+
+@article{li2020review,
+  title={A review on the monitoring of dam safety},
+  author={Li, Fan and Wang, Zhechao},
+  journal={Journal of Civil Structural Health Monitoring},
+  volume={10},
+  pages={1345--1369},
+  year={2020},
+  publisher={Springer},
+  doi={10.1007/s13349-020-00437-4}
+}
+%% Relevance: State-of-the-art review; gap framing
+
+%% ===== COMPETITORS (HIGH THREAT) =====
+
+@article{chen2021deep,
+  title={Deep learning-based anomaly detection for dam safety monitoring data},
+  author={Chen, Bo and others},
+  journal={Automation in Construction},
+  volume={128},
+  pages={103762},
+  year={2021},
+  publisher={Elsevier},
+  doi={10.1016/j.autcon.2021.103762}
+}
+%% Relevance: LSTM autoencoder on multi-sensor dam data; must beat on F1
+
+
+@article{zhang2023physics,
+  title={Physics-informed machine learning for structural health monitoring: A review},
+  author={Zhang, Xuan and others},
+  journal={Structural Health Monitoring},
+  volume={22},
+  number={6},
+  pages={2561--2591},
+  year={2023},
+  publisher={SAGE},
+  doi={10.1177/14759217231180422}
+}
+%% Relevance: PINN-SHM review; must position against this
+
+%% ===== COMPETITORS (MEDIUM THREAT) =====
+
+
+@article{li2020graph,
+  title={Graph neural network-based structural health monitoring},
+  author={Li, Yang and others},
+  journal={Journal of Civil Structural Health Monitoring},
+  volume={11},
+  pages={1073--1088},
+  year={2021},
+  publisher={Springer}
+}
+%% Relevance: GNN for SHM on bridges; dam topology differs
+
+@article{bao2021machine,
+  title={Machine learning paradigm for structural health monitoring},
+  author={Bao, Yuequan and others},
+  journal={Structural Health Monitoring},
+  volume={20},
+  number={4},
+  pages={1353--1372},
+  year={2021},
+  publisher={SAGE},
+  doi={10.1177/1475921720972416}
+}
+%% Relevance: Comprehensive ML-SHM review; positioning reference
+
+@article{salazar2017empirical,
+  title={An empirical comparison of machine learning techniques for dam behaviour modelling},
+  author={Salazar, Fernando and others},
+  journal={Structural Safety},
+  volume={56},
+  pages={9--17},
+  year={2017},
+  publisher={Elsevier},
+  doi={10.1016/j.strusafe.2015.05.001}
+}
+%% Relevance: Comparative ML study for dams; baseline methodology
+
+%% ===== PINN / PHYSICS-INFORMED ML =====
+
+@article{karniadakis2021physics,
+  title={Physics-informed machine learning},
+  author={Karniadakis, George Em and Kevrekidis, Ioannis G and Lu, Lu and Perdikaris, Paris and Wang, Sifan and Yang, Liu},
+  journal={Nature Reviews Physics},
+  volume={3},
+  pages={422--440},
+  year={2021},
+  publisher={Nature Publishing Group},
+  doi={10.1038/s42254-021-00314-5}
+}
+
+@article{haghighat2021physics,
+  title={A physics-informed deep learning framework for inversion and surrogate modeling in solid mechanics},
+  author={Haghighat, Ehsan and Raissi, Maziar and Moure, Adrian and Gomez, Hector and Juanes, Ruben},
+  journal={Computer Methods in Applied Mechanics and Engineering},
+  volume={379},
+  pages={113741},
+  year={2021},
+  publisher={Elsevier},
+  doi={10.1016/j.cma.2021.113741}
+}
+
+%% ===== GRAPH NEURAL NETWORKS =====
+
+@inproceedings{kipf2017semi,
+  title={Semi-supervised classification with graph convolutional networks},
+  author={Kipf, Thomas N and Welling, Max},
+  booktitle={International Conference on Learning Representations (ICLR)},
+  year={2017}
+}
+
+@inproceedings{velickovic2018graph,
+  title={Graph attention networks},
+  author={Veli{\v{c}}kovi{\'c}, Petar and Cucurull, Guillem and Casanova, Arantxa and Romero, Adriana and Li{\`o}, Pietro and Bengio, Yoshua},
+  booktitle={International Conference on Learning Representations (ICLR)},
+  year={2018}
+}
+
+%% ===== ANOMALY DETECTION / FUSION =====
+
+@book{shafer1976mathematical,
+  title={A Mathematical Theory of Evidence},
+  author={Shafer, Glenn},
+  year={1976},
+  publisher={Princeton University Press}
+}
+
+%% ===== LSTM / SEQUENCE MODELS =====
+
+@article{hochreiter1997long,
+  title={Long short-term memory},
+  author={Hochreiter, Sepp and Schmidhuber, J{\"u}rgen},
+  journal={Neural Computation},
+  volume={9},
+  number={8},
+  pages={1735--1780},
+  year={1997},
+  publisher={MIT Press},
+  doi={10.1162/neco.1997.9.8.1735}
+}
+
+%% ===== DAM PHYSICS =====
+
+@article{biot1941general,
+  title={General theory of three-dimensional consolidation},
+  author={Biot, Maurice A},
+  journal={Journal of Applied Physics},
+  volume={12},
+  number={2},
+  pages={155--164},
+  year={1941},
+  publisher={AIP},
+  doi={10.1063/1.1712886}
+}
+
+@book{bear1972dynamics,
+  title={Dynamics of Fluids in Porous Media},
+  author={Bear, Jacob},
+  year={1972},
+  publisher={American Elsevier}
+}
+
+%% ===== DEMPSTER-SHAFER / EVIDENCE THEORY =====
+
+@article{dempster1968generalization,
+  title={A generalization of {B}ayesian inference},
+  author={Dempster, Arthur P},
+  journal={Journal of the Royal Statistical Society: Series B},
+  volume={30},
+  number={2},
+  pages={205--247},
+  year={1968}
+}
+
+%% ===== ADDITIONAL DAM MONITORING =====
+
+@article{salazar2015data,
+  title={Data-based models for the prediction of dam behaviour: a review and some methodological considerations},
+  author={Salazar, Fernando and Mor{\'a}n, Rafael and Toledo, Miguel {\'A}ngel and O{\~n}ate, Eugenio},
+  journal={Archives of Computational Methods in Engineering},
+  volume={24},
+  pages={1--21},
+  year={2017},
+  publisher={Springer},
+  doi={10.1007/s11831-015-9157-9}
+}
+
+@article{ICOLD2018,
+  title={Dam Surveillance Guide},
+  author={{International Commission on Large Dams (ICOLD)}},
+  journal={ICOLD Bulletin},
+  volume={158},
+  year={2018},
+  publisher={ICOLD}
+}
+
+@article{tong2023dam,
+  title={Dam safety monitoring data anomaly detection using attention-based {LSTM}},
+  author={Tong, Xiaolong and others},
+  journal={Water},
+  volume={15},
+  number={4},
+  pages={830},
+  year={2023}
+}

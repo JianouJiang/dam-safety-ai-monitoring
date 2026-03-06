@@ -1,0 +1,124 @@
+\begin{thebibliography}{10}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \def\href#1#2{#2} \def\path#1{#1}\fi
+
+\bibitem{ICOLD2018}
+{International Commission on Large Dams (ICOLD)}, Dam surveillance guide, ICOLD
+  Bulletin 158 (2018).
+
+\bibitem{li2020review}
+F.~Li, Z.~Wang, A review on the monitoring of dam safety, Journal of Civil
+  Structural Health Monitoring 10 (2020) 1345--1369.
+\newblock \href {https://doi.org/10.1007/s13349-020-00437-4}
+  {\path{doi:10.1007/s13349-020-00437-4}}.
+
+\bibitem{mata2011interpretation}
+J.~Mata, Interpretation of concrete dam behaviour with artificial neural
+  network and multiple linear regression models, Engineering Structures 33~(3)
+  (2011) 903--910.
+\newblock \href {https://doi.org/10.1016/j.engstruct.2010.12.011}
+  {\path{doi:10.1016/j.engstruct.2010.12.011}}.
+
+\bibitem{salazar2017empirical}
+F.~Salazar, et~al., An empirical comparison of machine learning techniques for
+  dam behaviour modelling, Structural Safety 56 (2017) 9--17.
+\newblock \href {https://doi.org/10.1016/j.strusafe.2015.05.001}
+  {\path{doi:10.1016/j.strusafe.2015.05.001}}.
+
+\bibitem{salazar2015data}
+F.~Salazar, R.~Mor{\'a}n, M.~{\'A}. Toledo, E.~O{\~n}ate, Data-based models for
+  the prediction of dam behaviour: a review and some methodological
+  considerations, Archives of Computational Methods in Engineering 24 (2017)
+  1--21.
+\newblock \href {https://doi.org/10.1007/s11831-015-9157-9}
+  {\path{doi:10.1007/s11831-015-9157-9}}.
+
+\bibitem{hochreiter1997long}
+S.~Hochreiter, J.~Schmidhuber, Long short-term memory, Neural Computation 9~(8)
+  (1997) 1735--1780.
+\newblock \href {https://doi.org/10.1162/neco.1997.9.8.1735}
+  {\path{doi:10.1162/neco.1997.9.8.1735}}.
+
+\bibitem{chen2021deep}
+B.~Chen, et~al., Deep learning-based anomaly detection for dam safety
+  monitoring data, Automation in Construction 128 (2021) 103762.
+\newblock \href {https://doi.org/10.1016/j.autcon.2021.103762}
+  {\path{doi:10.1016/j.autcon.2021.103762}}.
+
+\bibitem{zhang2023physics}
+X.~Zhang, et~al., Physics-informed machine learning for structural health
+  monitoring: A review, Structural Health Monitoring 22~(6) (2023) 2561--2591.
+\newblock \href {https://doi.org/10.1177/14759217231180422}
+  {\path{doi:10.1177/14759217231180422}}.
+
+\bibitem{bao2021machine}
+Y.~Bao, et~al., Machine learning paradigm for structural health monitoring,
+  Structural Health Monitoring 20~(4) (2021) 1353--1372.
+\newblock \href {https://doi.org/10.1177/1475921720972416}
+  {\path{doi:10.1177/1475921720972416}}.
+
+\bibitem{raissi2019physics}
+M.~Raissi, P.~Perdikaris, G.~E. Karniadakis, Physics-informed neural networks:
+  A deep learning framework for solving forward and inverse problems involving
+  nonlinear partial differential equations, Journal of Computational Physics
+  378 (2019) 686--707.
+\newblock \href {https://doi.org/10.1016/j.jcp.2018.10.045}
+  {\path{doi:10.1016/j.jcp.2018.10.045}}.
+
+\bibitem{karniadakis2021physics}
+G.~E. Karniadakis, I.~G. Kevrekidis, L.~Lu, P.~Perdikaris, S.~Wang, L.~Yang,
+  Physics-informed machine learning, Nature Reviews Physics 3 (2021) 422--440.
+\newblock \href {https://doi.org/10.1038/s42254-021-00314-5}
+  {\path{doi:10.1038/s42254-021-00314-5}}.
+
+\bibitem{bear1972dynamics}
+J.~Bear, Dynamics of Fluids in Porous Media, American Elsevier, 1972.
+
+\bibitem{biot1941general}
+M.~A. Biot, General theory of three-dimensional consolidation, Journal of
+  Applied Physics 12~(2) (1941) 155--164.
+\newblock \href {https://doi.org/10.1063/1.1712886}
+  {\path{doi:10.1063/1.1712886}}.
+
+\bibitem{haghighat2021physics}
+E.~Haghighat, M.~Raissi, A.~Moure, H.~Gomez, R.~Juanes, A physics-informed deep
+  learning framework for inversion and surrogate modeling in solid mechanics,
+  Computer Methods in Applied Mechanics and Engineering 379 (2021) 113741.
+\newblock \href {https://doi.org/10.1016/j.cma.2021.113741}
+  {\path{doi:10.1016/j.cma.2021.113741}}.
+
+\bibitem{kipf2017semi}
+T.~N. Kipf, M.~Welling, Semi-supervised classification with graph convolutional
+  networks, in: International Conference on Learning Representations (ICLR),
+  2017.
+
+\bibitem{li2020graph}
+Y.~Li, et~al., Graph neural network-based structural health monitoring, Journal
+  of Civil Structural Health Monitoring 11 (2021) 1073--1088.
+
+\bibitem{velickovic2018graph}
+P.~Veli{\v{c}}kovi{\'c}, G.~Cucurull, A.~Casanova, A.~Romero, P.~Li{\`o},
+  Y.~Bengio, Graph attention networks, in: International Conference on Learning
+  Representations (ICLR), 2018.
+
+\bibitem{tong2023dam}
+X.~Tong, et~al., Dam safety monitoring data anomaly detection using
+  attention-based {LSTM}, Water 15~(4) (2023) 830.
+
+\bibitem{su2011study}
+H.~Su, Z.~Wen, Z.~Wu, Study on an intelligent inference engine in early-warning
+  system of dam health, Water Resources Management 25~(6) (2011) 1545--1563.
+\newblock \href {https://doi.org/10.1007/s11269-010-9760-3}
+  {\path{doi:10.1007/s11269-010-9760-3}}.
+
+\bibitem{shafer1976mathematical}
+G.~Shafer, A Mathematical Theory of Evidence, Princeton University Press, 1976.
+
+\bibitem{dempster1968generalization}
+A.~P. Dempster, A generalization of {B}ayesian inference, Journal of the Royal
+  Statistical Society: Series B 30~(2) (1968) 205--247.
+
+\end{thebibliography}

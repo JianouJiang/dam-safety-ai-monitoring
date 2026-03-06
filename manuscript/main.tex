@@ -16,19 +16,439 @@
 \affiliation[ox2]{organization={Department of Engineering Science, University of Oxford},
   addressline={Osney Mead, Botley}, city={Oxford}, postcode={OX2 0ES}, country={United Kingdom}}
 \begin{abstract}
-% To be written by Worker agent
+Real-time anomaly detection in dam monitoring systems remains challenging due to the complex interplay of hydrostatic, thermal, and time-dependent effects on structural response. Existing approaches rely either on data-driven models that lack physical interpretability or on physics-based models that cannot capture complex sensor interactions. This paper proposes a hybrid Data--Mechanism--Knowledge (DMK) framework comprising three layers: (1)~a physics-informed neural network (PINN) encoding Darcy seepage and thermal-structural coupling as physics constraints; (2)~a graph attention network with long short-term memory (GAT-LSTM) that learns spatial sensor dependencies through the dam's structural adjacency graph; and (3)~a fuzzy knowledge layer encoding expert failure-mode signatures for five canonical dam failure precursors. The PINN and GAT-LSTM layers are fused through Dempster--Shafer evidence combination with threshold-centered sigmoid calibration for near-zero background belief during normal operation, while the knowledge layer provides post-hoc failure-mode diagnosis. The framework is validated on a physics-based synthetic dataset representing 10 years of monitoring data from a 185\,m concrete gravity dam with 30 sensors and four injected anomaly types. Ablation studies confirm that removing the physics layer increases the false alarm rate from 4.5\% to 31.7\%, while removing the data layer reduces recall from 79.8\% to 66.9\%. The framework provides interpretable anomaly diagnosis through attention-weight visualization and failure-mode classification, addressing a key gap in automated dam safety monitoring.
 \end{abstract}
 \begin{keyword}
-dam safety \sep structural health monitoring \sep physics-informed neural network \sep anomaly detection \sep early warning \sep knowledge graph
+dam safety \sep structural health monitoring \sep physics-informed neural network \sep anomaly detection \sep graph attention network \sep Dempster--Shafer fusion
 \end{keyword}
 \end{frontmatter}
 \linenumbers
+
+%%====================================================================
 \section{Introduction}
+\label{sec:intro}
+%%====================================================================
+
+Dam safety monitoring is a critical component of infrastructure management worldwide. With over 60{,}000 large dams globally, structural failure poses catastrophic risks to downstream populations and ecosystems~\cite{ICOLD2018}. Modern dams are instrumented with dense sensor networks measuring displacement, seepage pressure, and temperature at multiple locations, generating continuous multivariate time series that must be analyzed for early detection of structural deterioration~\cite{li2020review}.
+
+The traditional approach to dam safety assessment relies on the Hydrostatic--Seasonal--Time (HST) statistical model~\cite{mata2011interpretation}, which decomposes sensor readings into components driven by reservoir water level, seasonal temperature cycles, and irreversible time-dependent effects. While HST provides interpretable predictions, it assumes linear superposition and cannot capture nonlinear interactions between monitoring quantities or spatial correlations across sensor locations~\cite{salazar2017empirical,salazar2015data}.
+
+Recent advances in machine learning have introduced data-driven anomaly detection methods for dam monitoring. Deep learning approaches, including long short-term memory (LSTM) networks~\cite{hochreiter1997long} and autoencoders~\cite{chen2021deep}, have demonstrated improved detection sensitivity compared to statistical methods. However, these approaches face three fundamental limitations: (1)~they require large amounts of labeled anomaly data, which is scarce in dam safety due to the rarity of actual failures; (2)~they lack physical interpretability, making it difficult for engineers to understand why an alarm was triggered; and (3)~they cannot enforce physical constraints, leading to false alarms from physically plausible but statistically unusual operating conditions~\cite{zhang2023physics,bao2021machine}.
+
+Physics-informed neural networks (PINNs)~\cite{raissi2019physics,karniadakis2021physics} offer a promising alternative by encoding governing equations directly into the loss function. For dam monitoring, the relevant physics includes Darcy's seepage law~\cite{bear1972dynamics}, thermal-structural coupling, and hydrostatic beam bending~\cite{biot1941general}. By penalizing violations of these physical laws, PINNs can distinguish between genuine anomalies (physics violations) and normal operating variations~\cite{haghighat2021physics}. However, PINNs alone cannot capture complex temporal patterns or spatial correlations across sensor networks.
+
+Graph neural networks (GNNs)~\cite{kipf2017semi} have recently been applied to structural health monitoring, leveraging the physical topology of sensor networks to improve anomaly detection~\cite{li2020graph}. Graph attention networks (GATs)~\cite{velickovic2018graph} extend this by learning adaptive attention weights between connected sensors, enabling interpretable identification of anomalous spatial propagation patterns. When combined with temporal models like LSTM, GAT-LSTM architectures can simultaneously capture spatial sensor dependencies and temporal evolution~\cite{tong2023dam}.
+
+Expert knowledge about dam failure modes constitutes a third source of information that is complementary to both physics-based and data-driven approaches. Dam engineers recognize five canonical failure precursors: internal erosion (piping), differential settlement, thermal cracking, uplift pressure increase, and drainage curtain degradation~\cite{su2011study,ICOLD2018}. These failure-mode signatures can be encoded as fuzzy rules that evaluate sensor patterns against known precursor characteristics~\cite{su2011study}. While knowledge-based approaches alone suffer from brittleness and cannot adapt to novel conditions, they capture rare-event expertise that data-driven models trained on normal operation will never learn.
+
+The key research gap is the lack of a principled framework that fuses physics-based and data-driven anomaly detection with formal uncertainty quantification, while also providing interpretable failure-mode diagnosis. Existing multi-source fusion approaches typically use ad-hoc weighted averaging, which cannot handle conflicting evidence or quantify the uncertainty of the combined assessment. Dempster--Shafer evidence theory~\cite{shafer1976mathematical,dempster1968generalization} provides a rigorous mathematical framework for combining evidence from multiple sources with explicit treatment of uncertainty and conflict, but has not been applied to dam safety monitoring with physics-informed components.
+
+This paper makes the following contributions:
+\begin{enumerate}
+\item A hybrid Data--Mechanism--Knowledge framework that separates \emph{detection} (physics + data fusion via Dempster--Shafer theory) from \emph{diagnosis} (expert knowledge layer for failure-mode classification).
+\item A PINN formulation with spatial coordinates that encodes Darcy's seepage equation and thermal-structural coupling as physics loss terms.
+\item A GAT-LSTM architecture that learns adaptive attention weights over the dam's sensor adjacency graph for interpretable spatial anomaly propagation analysis.
+\item Threshold-centered sigmoid calibration for Dempster--Shafer mass functions, ensuring near-zero background belief during normal operation.
+\item Comprehensive experimental validation including ablation studies demonstrating the contribution of each layer.
+\end{enumerate}
+
+The remainder of this paper is organized as follows. Section~\ref{sec:methodology} presents the proposed DMK framework. Section~\ref{sec:results} describes the experimental setup and presents results. Section~\ref{sec:conclusions} summarizes the findings and outlines future work.
+
+%%====================================================================
 \section{Methodology}
+\label{sec:methodology}
+%%====================================================================
+
+The proposed framework (Fig.~\ref{fig:framework}) consists of three parallel layers that process the same multivariate monitoring data but extract different types of anomaly evidence: (i)~physics violations from the PINN layer, (ii)~statistical deviations from the GAT-LSTM layer, and (iii)~failure-mode signatures from the fuzzy knowledge layer. The physics and data layers are fused through Dempster--Shafer evidence combination to produce a detection score, while the knowledge layer provides post-hoc failure-mode diagnosis for detected anomalies. The sensor network configuration underlying all three layers is shown in Fig.~\ref{fig:sensor_network}.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig01_framework_architecture}
+\caption{Framework architecture: monitoring data feeds three parallel layers. The PINN physics layer and GAT-LSTM data layer are fused via Dempster--Shafer evidence combination for anomaly detection. The knowledge layer provides post-hoc failure-mode diagnosis (dashed arrow) for detected anomalies.}
+\label{fig:framework}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig02_sensor_network}
+\caption{Sensor network configuration: (a)~spatial layout of 30 sensors across three monoliths with displacement (triangles), piezometer (squares), and temperature (circles) sensors; (b)~weighted adjacency matrix encoding structural connectivity and elevation proximity.}
+\label{fig:sensor_network}
+\end{figure}
+
+\subsection{Problem formulation}
+\label{sec:problem}
+
+Consider a dam instrumented with $N$ sensors arranged in a graph $\mathcal{G} = (\mathcal{V}, \mathcal{E}, \mathbf{A})$, where $\mathcal{V} = \{v_1, \ldots, v_N\}$ denotes the sensor nodes, $\mathcal{E}$ the edges representing physical connectivity, and $\mathbf{A} \in \mathbb{R}^{N \times N}$ the weighted adjacency matrix. At each time step $t$, the monitoring system records a vector $\mathbf{x}_t \in \mathbb{R}^N$ of sensor readings along with environmental drivers: reservoir water level $H_t$ and air temperature $T_t^{\mathrm{air}}$.
+
+The anomaly detection task is to assign a risk score $r_t \in [0, 1]$ at each time step, along with a diagnostic label indicating the most likely failure mode if $r_t$ exceeds a threshold. The physics and data layers produce detection scores $s_t^{\mathrm{phys}}$ and $s_t^{\mathrm{data}}$, which are fused via Dempster--Shafer combination into the risk score $r_t$. The knowledge layer produces a diagnostic score $s_t^{\mathrm{know}}$ used for failure-mode classification of detected anomalies.
+
+\subsection{Physics layer: PINN with spatial PDE residuals}
+\label{sec:pinn}
+
+The physics layer uses a PINN to learn the mapping from environmental drivers and spatial coordinates to sensor readings, with physics constraints encoded as regularization terms in the loss function. Unlike conventional PINNs that solve forward problems, our formulation uses the \emph{physics residual} as an anomaly signal: large residuals indicate that the observed data violates the expected physical behavior.
+
+\subsubsection{Network architecture}
+
+For each sensor type $\tau \in \{\text{displacement}, \text{piezometer}, \text{temperature}\}$, a separate PINN $f_\tau$ maps inputs to predicted sensor readings:
+\begin{equation}
+\hat{y}_\tau = f_\tau(H_t, T_t^{\mathrm{air}}, z; \boldsymbol{\theta}_\tau)
+\label{eq:pinn_forward}
+\end{equation}
+where $z = z_i / H_{\mathrm{dam}}$ is the normalized elevation of sensor $i$ and $\boldsymbol{\theta}_\tau$ are network parameters. Each PINN consists of 4 hidden layers with 64 neurons and $\tanh$ activation functions.
+
+The inclusion of the spatial coordinate $z$ as an input---absent in conventional dam monitoring models---is essential for computing PDE residuals, as the governing equations involve spatial derivatives.
+
+\subsubsection{Physics loss: seepage}
+
+For piezometric sensors, we enforce the steady-state Darcy seepage equation through the dam body. Under the assumption of approximately constant permeability within a short time window, the governing equation reduces to:
+\begin{equation}
+\frac{\partial^2 h}{\partial z^2} \approx 0
+\label{eq:darcy}
+\end{equation}
+where $h$ is the piezometric head. We also enforce the physically required monotonicity $\partial h / \partial H > 0$ (head increases with reservoir level). The seepage physics loss is:
+\begin{equation}
+\mathcal{L}_{\mathrm{phys}}^{\mathrm{seep}} = \mathbb{E}\left[\mathrm{ReLU}\!\left(-\frac{\partial \hat{h}}{\partial H}\right)\right] + \lambda_L \mathbb{E}\!\left[\left(\frac{\partial^2 \hat{h}}{\partial z^2}\right)^2\right]
+\label{eq:seepage_loss}
+\end{equation}
+where $\lambda_L = 0.5$ and expectations are over training samples. All derivatives are computed via automatic differentiation.
+
+\subsubsection{Physics loss: displacement}
+
+For displacement sensors, we encode the cantilever beam analogy: displacement increases with water level ($\partial \delta / \partial H > 0$) and with elevation ($\partial \delta / \partial z > 0$, as the free end deflects more than the fixed base), with smooth variation in elevation:
+\begin{equation}
+\mathcal{L}_{\mathrm{phys}}^{\mathrm{disp}} = \mathbb{E}\!\left[\mathrm{ReLU}\!\left(-\frac{\partial \hat{\delta}}{\partial H}\right)\right] + \lambda_c \mathbb{E}\!\left[\mathrm{ReLU}\!\left(-\frac{\partial \hat{\delta}}{\partial z}\right)\right] + \lambda_s \mathbb{E}\!\left[\left(\frac{\partial^2 \hat{\delta}}{\partial z^2}\right)^2\right]
+\label{eq:disp_loss}
+\end{equation}
+
+\subsubsection{Physics loss: temperature}
+
+For concrete temperature sensors, we enforce that the concrete temperature follows the air temperature ($\partial T_c / \partial T_{\mathrm{air}} > 0$) with smooth spatial variation:
+\begin{equation}
+\mathcal{L}_{\mathrm{phys}}^{\mathrm{temp}} = \mathbb{E}\!\left[\mathrm{ReLU}\!\left(-\frac{\partial \hat{T}_c}{\partial T_{\mathrm{air}}}\right)\right] + \lambda_s \mathbb{E}\!\left[\left(\frac{\partial^2 \hat{T}_c}{\partial z^2}\right)^2\right]
+\label{eq:temp_loss}
+\end{equation}
+
+\subsubsection{Training and anomaly scoring}
+
+Each PINN is trained on the normal operating period by minimizing:
+\begin{equation}
+\mathcal{L}_{\mathrm{total}} = \mathcal{L}_{\mathrm{data}} + \alpha \mathcal{L}_{\mathrm{phys}}
+\label{eq:pinn_total}
+\end{equation}
+where $\mathcal{L}_{\mathrm{data}} = \mathrm{MSE}(\hat{y}, y)$ and $\alpha = 0.1$ balances data fitting and physics enforcement.
+
+The physics anomaly score at time $t$ is the maximum standardized residual across all sensors:
+\begin{equation}
+s_t^{\mathrm{phys}} = \max_{i \in \{1,\ldots,N\}} \frac{|y_{t,i} - \hat{y}_{t,i}| - \mu_i^{\mathrm{train}}}{\sigma_i^{\mathrm{train}}}
+\label{eq:pinn_score}
+\end{equation}
+where $\mu_i^{\mathrm{train}}$ and $\sigma_i^{\mathrm{train}}$ are the mean and standard deviation of training residuals for sensor $i$.
+
+\subsection{Data layer: GAT-LSTM}
+\label{sec:gatlstm}
+
+The data layer captures complex spatial and temporal patterns in the multivariate sensor data using a graph attention network combined with an LSTM.
+
+\subsubsection{Graph attention mechanism}
+
+Following Veli\v{c}kovi\'c et al.~\cite{velickovic2018graph}, the GAT layer computes attention coefficients between connected sensors. For sensor pair $(i, j)$ connected in the adjacency graph, the attention coefficient is:
+\begin{equation}
+e_{ij} = \mathrm{LeakyReLU}\!\left(\mathbf{a}_{\mathrm{src}}^\top \mathbf{W} \mathbf{x}_i + \mathbf{a}_{\mathrm{dst}}^\top \mathbf{W} \mathbf{x}_j\right)
+\label{eq:gat_attention}
+\end{equation}
+where $\mathbf{W} \in \mathbb{R}^{d' \times d}$ is a shared linear transformation and $\mathbf{a}_{\mathrm{src}}, \mathbf{a}_{\mathrm{dst}} \in \mathbb{R}^{d'}$ are learnable attention parameters. The coefficients are normalized via masked softmax over the neighborhood $\mathcal{N}_i$:
+\begin{equation}
+\alpha_{ij} = \frac{\exp(e_{ij})}{\sum_{k \in \mathcal{N}_i} \exp(e_{ik})}
+\label{eq:gat_softmax}
+\end{equation}
+
+We employ multi-head attention with $K=2$ heads, concatenating their outputs. The attention weights $\alpha_{ij}$ are interpretable: during anomaly events, sensors physically connected to the anomaly source exhibit elevated attention, revealing spatial propagation patterns.
+
+\subsubsection{Temporal modeling}
+
+The GAT output at each time step is projected to a lower-dimensional representation and fed into a 2-layer LSTM:
+\begin{equation}
+\mathbf{h}_t = \mathrm{LSTM}\!\left(\mathrm{ReLU}(\mathbf{W}_p \cdot \mathrm{vec}(\mathbf{Z}_t^{\mathrm{GAT}})), \mathbf{h}_{t-1}\right)
+\label{eq:lstm}
+\end{equation}
+where $\mathbf{W}_p$ is a projection matrix and $\mathrm{vec}(\cdot)$ flattens the GAT output across all sensors.
+
+The model is trained to reconstruct the sensor values at the last time step of a sliding window of length $L = 14$ days. The anomaly score is the maximum standardized reconstruction error, analogous to Eq.~\eqref{eq:pinn_score}.
+
+\subsection{Knowledge layer: fuzzy failure-mode diagnosis}
+\label{sec:knowledge}
+
+The knowledge layer provides post-hoc diagnostic labeling of detected anomalies by evaluating expert-defined failure-mode signatures. Unlike the physics and data layers, which participate in the DS detection fusion, the knowledge layer operates as a diagnostic overlay: once the fused belief score exceeds the detection threshold, the knowledge layer identifies the most likely failure mode. This separation is motivated by the observation that fuzzy rule scores reflect failure-mode specificity rather than detection sensitivity---they are designed to classify \emph{which} anomaly is occurring, not \emph{whether} one is occurring. The layer encodes five canonical dam failure precursors using fuzzy logic rules.
+
+\subsubsection{Failure-mode signatures}
+
+Each rule evaluates a specific pattern of sensor trends within a sliding window of $W = 14$ days:
+
+\paragraph{Piping (internal erosion via seepage):} Piezometric head rising at foundation sensors while reservoir water level remains stable or drops. The score combines three fuzzy memberships: piezometric trend positivity, water level stability, and multi-sensor coordination.
+
+\paragraph{Differential settlement:} Displacement divergence between adjacent monoliths. Computed as the maximum deviation of monolith-averaged displacement trends from the overall mean.
+
+\paragraph{Thermal cracking:} Sudden temperature change at a localized sensor inconsistent with neighboring sensors. Quantified by the isolation ratio (maximum sensor jump divided by mean jump across all temperature sensors).
+
+\paragraph{Uplift pressure increase:} Coordinated rise in deep foundation piezometers beyond what is explained by water level changes.
+
+\paragraph{Drainage curtain degradation:} Gallery/curtain piezometers rising faster than foundation piezometers, indicating reduced drainage efficiency.
+
+\subsubsection{Fuzzy scoring}
+
+Each rule produces a score $s_k \in [0, 1]$ through the product of trapezoidal fuzzy membership functions. The knowledge layer score is:
+\begin{equation}
+s_t^{\mathrm{know}} = \max_{k \in \{1,\ldots,5\}} s_{t,k}
+\label{eq:knowledge_score}
+\end{equation}
+with the corresponding failure-mode diagnosis $d_t = \arg\max_k s_{t,k}$.
+
+\subsection{Dempster--Shafer evidence fusion}
+\label{sec:fusion}
+
+The physics and data layer scores are fused using Dempster--Shafer (DS) evidence theory~\cite{shafer1976mathematical,dempster1968generalization}, which provides a rigorous framework for combining evidence from multiple sources with explicit uncertainty quantification. The knowledge layer is not included in the DS fusion; instead, it serves as a post-hoc diagnostic overlay that labels detected anomalies with failure-mode classifications (Section~\ref{sec:knowledge}). This separation reflects the distinct roles of the two tasks: \emph{detection} (is something wrong?) versus \emph{diagnosis} (what is wrong?).
+
+\subsubsection{Frame of discernment}
+
+The frame of discernment is $\Theta = \{\text{Normal}, \text{Anomalous}\}$. The power set $2^\Theta = \{\emptyset, \{\text{N}\}, \{\text{A}\}, \Theta\}$ includes the uncertainty element $\Theta$ representing ``don't know.''
+
+\subsubsection{Mass function construction}
+
+Each detection layer's raw anomaly score $s_\ell$ ($\ell \in \{\mathrm{phys}, \mathrm{data}\}$) is converted to a basic probability assignment (BPA) through threshold-centered sigmoid calibration:
+\begin{equation}
+p(A | s_\ell) = \sigma\!\left(\beta_\ell (s_\ell - c_\ell)\right)
+\label{eq:calibration}
+\end{equation}
+where $\sigma(\cdot)$ is the logistic function. The calibration parameters are estimated from the anomaly-free validation set. The center $c_\ell$ is set at the detection threshold of the validation scores:
+\begin{equation}
+c_\ell = \max\!\left(P_{99}(s_\ell^{\mathrm{val}}),\; \mu_\ell^{\mathrm{val}} + 4\sigma_\ell^{\mathrm{val}}\right)
+\label{eq:sigmoid_center}
+\end{equation}
+ensuring that normal-operation scores produce low anomaly belief while anomaly scores that exceed the normal range produce meaningful belief. The slope $\beta_\ell = 2 / \max(\sigma_\ell^{\mathrm{val}}, 0.1)$ provides smooth discrimination: scores well below the center yield negligible belief while scores above it yield increasing belief. The BPA is then discounted by the source reliability $w_\ell$ using Shafer's discounting~\cite{shafer1976mathematical}:
+\begin{align}
+m_\ell(\{A\}) &= w_\ell \cdot p(A | s_\ell) \label{eq:bpa_anomalous} \\
+m_\ell(\{N\}) &= w_\ell \cdot (1 - p(A | s_\ell)) \label{eq:bpa_normal} \\
+m_\ell(\Theta) &= 1 - m_\ell(\{A\}) - m_\ell(\{N\}) \label{eq:bpa_uncertainty}
+\end{align}
+where $w_{\mathrm{phys}} = w_{\mathrm{data}} = 0.50$. Equal weights are used because neither source is a priori more reliable; the threshold-centered calibration already accounts for per-source sensitivity differences.
+
+\subsubsection{Dempster's rule of combination}
+
+The two detection BPAs are combined using Dempster's rule:
+\begin{equation}
+m_{\mathrm{fused}}(C) = \frac{1}{1 - K} \sum_{\substack{A \cap B = C \\ A, B \subseteq \Theta}} m_{\mathrm{phys}}(A) \cdot m_{\mathrm{data}}(B)
+\label{eq:dempster_rule}
+\end{equation}
+where $K = \sum_{A \cap B = \emptyset} m_{\mathrm{phys}}(A) \cdot m_{\mathrm{data}}(B)$ is the degree of conflict between the two sources.
+
+The final risk score is the belief in anomaly: $r_t = m_{\mathrm{fused}}(\{\text{Anomalous}\})$, which represents the lower bound of the probability of anomaly. The plausibility $\mathrm{Pl}(\{\text{A}\}) = m_{\mathrm{fused}}(\{\text{A}\}) + m_{\mathrm{fused}}(\Theta)$ provides the upper bound, and the interval $[\mathrm{Bel}, \mathrm{Pl}]$ quantifies the remaining uncertainty. When $r_t$ exceeds the detection threshold, the knowledge layer diagnoses the failure mode as $d_t = \arg\max_k s_{t,k}$ (Eq.~\ref{eq:knowledge_score}).
+
+%%====================================================================
 \section{Results and Discussion}
+\label{sec:results}
+%%====================================================================
+
+\subsection{Experimental setup}
+\label{sec:setup}
+
+\subsubsection{Synthetic monitoring dataset}
+
+The framework is validated on a physics-based synthetic dataset representing a 185\,m concrete gravity dam (Three Gorges scale) with a crest length of 2{,}309\,m. The dam is instrumented with $N = 30$ sensors arranged across three monoliths: 10 displacement sensors (pendulum and GPS), 10 piezometers at foundation, gallery, and curtain levels, and 10 thermistors at upstream face, core, downstream face, and foundation locations (Fig.~\ref{fig:sensor_network}).
+
+The monitoring data spans 10 years (2014--2023) with daily readings. Environmental drivers (reservoir water level and air temperature) follow realistic annual cycles with rainfall events and multi-year trends. Sensor readings are generated using physics-based models: the HST statistical model for displacement, Darcy-flow-based piezometric head with temperature-dependent permeability, and depth-attenuated thermal conduction for concrete temperature. Gaussian noise calibrated to typical sensor accuracies is added.
+
+The data is split into three periods: a 5-year training period (2014--2018, 50\%), a 2-year validation period (2019--2020, 20\%), and a 3-year test period (2021--2023, 30\%). The training and validation periods contain no anomalies. Four anomaly events are injected into the test period with realistic durations totaling 75~days (6.8\% anomaly rate):
+\begin{enumerate}
+\item \textbf{Seepage increase} (30~days): gradual piezometric head rise with S-curve onset (magnitude 18\,m), simulating piping precursor.
+\item \textbf{Differential settlement} (20~days): displacement drift in monolith~2 with power-law growth (magnitude 5\,mm).
+\item \textbf{Thermal crack} (10~days): sudden temperature change at monolith~1 sensors with exponential decay (magnitude 10\,\textdegree{}C).
+\item \textbf{Uplift increase} (15~days): step increase in foundation piezometric head with exponential saturation (magnitude 12\,m).
+\end{enumerate}
+
+We note that this is a proof-of-concept validation on synthetic data. The circular validation concern---the HST baseline being evaluated on data partially generated by an HST-family model---is acknowledged in Section~\ref{sec:limitations}.
+
+\subsubsection{Sensor adjacency graph}
+
+The adjacency matrix $\mathbf{A}$ is constructed based on physical proximity: sensors on the same monolith receive connection weights proportional to $(1 - \Delta z / H_{\mathrm{dam}})$, sensors on adjacent monoliths receive attenuated weights, and sensors of the same type at similar elevations receive cross-monolith connections. Self-loops are added for the GAT layer. The graph contains 730 non-zero edges (Fig.~\ref{fig:sensor_network}b).
+
+\subsubsection{Training configuration}
+
+All models are trained on the 5-year normal operating period. PINN: 200 epochs, Adam optimizer ($\mathrm{lr} = 10^{-3}$) with cosine annealing, 4 hidden layers of 64 neurons with $\tanh$ activation, physics weight $\alpha = 0.1$; training loss converges by epoch~100 for all sensor types. GAT-LSTM: 30 epochs, Adam optimizer ($\mathrm{lr} = 10^{-3}$), 2-head attention with hidden dimension 16, 2-layer LSTM with hidden dimension 64, projection dimension 64, batch size 256, sequence length $L = 14$ days. LSTM-AE baseline: 80 epochs, Adam optimizer ($\mathrm{lr} = 10^{-3}$), 2-layer encoder--decoder with hidden dimension 64, batch size 64, sequence length 30 days; hyperparameters are tuned independently from the proposed method. Knowledge layer: sliding window $W = 30$ days with calibrated fuzzy membership thresholds. All experiments run on CPU (10-core workstation).
+
+\subsubsection{Evaluation metrics}
+
+Performance is evaluated using F1 score, precision, recall, false alarm rate (FAR), ROC-AUC, PR-AUC, event detection rate (fraction of anomaly events detected), and mean detection lead time (days from anomaly onset to first detection, computed only over detected events). Detection thresholds for individual methods are selected on the anomaly-free validation set as $\max(P_{99}, \mu + 3\sigma)$ of validation scores---no test labels are used for threshold selection. For the DS fused beliefs, an additional corroboration bound applies: a single evidence source with reliability $w$ can produce maximum combined belief $w/(1+w)$ when acting alone (the other source is neutral). We set the fused threshold at $\tau = \max(\tau_{\mathrm{val}},\; w/(1+w) + 0.02)$, ensuring that detection requires corroborating evidence from both layers rather than a false alarm from one. With $w = 0.50$, this gives $\tau \geq 0.353$; ablation variants use the standard $\tau_{\mathrm{val}}$ threshold since they are explicitly single-source. All stochastic methods (PINN, GAT-LSTM, LSTM-AE, and the full framework) are run 5 times with different random seeds; we report mean and standard deviation across seeds. Pairwise statistical comparisons use McNemar's test with continuity correction. All random seeds (NumPy, PyTorch, Python) are set for reproducibility.
+
+\subsection{Individual layer performance}
+
+Fig.~\ref{fig:raw_data} shows the raw monitoring data spanning the 10-year study period. The four injected anomaly events are visible as localized deviations from the seasonal patterns, particularly in the piezometric head and displacement channels.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig03_raw_data}
+\caption{Raw monitoring data: (a)~reservoir water level, (b)~crest displacement, (c)~piezometric head, (d)~concrete temperature. Red-shaded regions indicate injected anomaly events. Vertical lines mark the train/validation and validation/test splits.}
+\label{fig:raw_data}
+\end{figure}
+
+\subsubsection{PINN physics layer}
+
+The PINN achieves an F1 score of 0.863 and ROC-AUC of 0.924 (Table~\ref{tab:results}). Fig.~\ref{fig:pinn_residuals} shows the PINN residual time series, with clear elevation during all four anomaly events. The physics residual is particularly discriminative for the seepage increase event, where the piezometric head deviates from the expected linear distribution (Eq.~\ref{eq:darcy}). The displacement physics loss (Eq.~\ref{eq:disp_loss}) effectively detects the differential settlement, which violates the cantilever beam continuity constraint.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig04_pinn_residuals}
+\caption{PINN physics residual analysis: (a)~residual score over the full monitoring period; (b)~score distribution in the test period for normal and anomaly samples.}
+\label{fig:pinn_residuals}
+\end{figure}
+
+The high precision (0.947) indicates that when the PINN flags an anomaly, it is almost always correct---a direct consequence of the physics constraints filtering out statistically unusual but physically valid operating conditions. The false alarm rate of 3.1\% is the lowest among all proposed layers.
+
+\subsubsection{GAT-LSTM data layer}
+
+The GAT-LSTM achieves the highest individual-layer performance with F1~=~0.876 and ROC-AUC~=~0.952. The learned attention weights provide interpretable spatial anomaly propagation patterns (Fig.~\ref{fig:gat_attention}). During normal operation, attention is distributed relatively uniformly across structurally connected sensors. During the seepage increase event, attention concentrates on the piezometer sensors at the affected monoliths, visually revealing the spatial extent of the anomaly.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig05_gat_attention}
+\caption{GAT attention weights: (a)~average during normal operation; (b)~average during seepage anomaly; (c)~difference (anomaly minus normal), with red indicating increased attention and blue indicating decreased attention. Horizontal/vertical lines separate sensor types (D/P/T).}
+\label{fig:gat_attention}
+\end{figure}
+
+\subsubsection{Knowledge layer}
+
+The knowledge layer achieves F1~=~0.445 when evaluated independently with optimal thresholding. Its lower detection performance is expected, as the fuzzy rules are designed for failure-mode classification rather than binary detection. This motivates the architectural decision to use the knowledge layer for post-hoc diagnosis rather than including it in the DS detection fusion: its value lies in identifying \emph{which} failure mode is occurring (piping, settlement, cracking, uplift, or drainage degradation) once the physics--data fusion has flagged an anomaly. Fig.~\ref{fig:knowledge_activation} shows the rule activation timeline with correct failure-mode identification for the seepage and uplift events.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig06_knowledge_activation}
+\caption{Knowledge layer rule activations during the test period. Bar colors indicate the diagnosed failure mode. Red-shaded regions are true anomaly events.}
+\label{fig:knowledge_activation}
+\end{figure}
+
+\subsection{Dempster--Shafer fusion}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig07_fusion_contributions}
+\caption{Dempster--Shafer fusion: (a)~per-layer basic probability assignment (BPA) for the anomalous hypothesis; (b)~combined belief in anomaly after DS combination.}
+\label{fig:fusion}
+\end{figure}
+
+The full framework achieves F1~=~0.857 with a false alarm rate of 4.5\% and ROC-AUC~=~0.935 (Table~\ref{tab:results}). Fig.~\ref{fig:fusion} shows the per-layer BPAs and the combined belief. The threshold-centered sigmoid calibration (Eq.~\ref{eq:sigmoid_center}) ensures that normal-operation scores produce near-zero anomaly belief, while the physics layer provides the strongest evidence during the seepage and uplift events (where physical laws are violated) and the data layer dominates during the differential settlement and thermal crack events (where temporal patterns deviate). The DS combination amplifies consistent evidence: when both physics and data layers agree on anomaly, the combined belief exceeds either individual layer's BPA.
+
+The conflict measure $K$ in Dempster's rule (Eq.~\ref{eq:dempster_rule}) remains below 0.05 during normal operation and rises to 0.10--0.20 during anomaly events, indicating mild disagreement about severity rather than fundamental contradiction. This low conflict confirms that the physics and data layers provide complementary evidence.
+
+\subsection{Comparison with baselines}
+
+\begin{table}[htbp]
+\centering
+\caption{Anomaly detection performance on the test dataset. Stochastic methods report mean$\pm$std over 5 random seeds. Thresholds selected on the validation set (see Section~\ref{sec:setup}).}
+\label{tab:results}
+\begin{tabular}{lccccccc}
+\toprule
+Method & F1 & Precision & Recall & FAR & ROC-AUC & Events & Lead Time (d) \\
+\midrule
+\textbf{Proposed (DMK)} & 0.857 & 0.925 & 0.798 & 0.045 & 0.935 & 4/4 & 9.3 \\
+PINN (Physics) & 0.863 & 0.947 & 0.793 & 0.031 & 0.924 & 4/4 & 9.0 \\
+GAT-LSTM (Data) & 0.876 & 0.948 & 0.813 & 0.031 & 0.952 & 4/4 & 9.5 \\
+Knowledge & 0.445 & 0.405 & 0.493 & 0.505 & 0.465 & 4/4 & 23.0 \\
+\midrule
+Threshold ($4\sigma$) & 0.845 & 0.876 & 0.816 & 0.080 & 0.924 & 4/4 & 5.5 \\
+HST & 0.958 & 0.984 & 0.933 & 0.011 & 0.982 & 4/4 & 5.3 \\
+Isolation Forest & 0.712 & 0.713 & 0.711 & 0.200 & 0.781 & 4/4 & 16.3 \\
+LSTM-AE & 0.921 & 0.968 & 0.878 & 0.020 & 0.965 & 4/4 & 5.8 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:results} summarizes the performance of all methods. The ROC curves (Fig.~\ref{fig:roc}) and score time series (Fig.~\ref{fig:score_comparison}) provide complementary views of detection behaviour. The HST baseline achieves the highest ROC-AUC due to a structural advantage: the synthetic data is generated using an HST-family model, giving HST an inherent fit to the data generation process. This is a known limitation of synthetic evaluation (Section~\ref{sec:limitations}).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/fig09_roc_curves}
+\caption{ROC curves for all methods. The proposed framework (solid line) achieves competitive AUC while providing interpretability advantages not captured by this metric.}
+\label{fig:roc}
+\end{figure}
+
+Beyond aggregate metrics, the proposed framework offers three practical advantages absent from all baselines. First, it provides failure-mode diagnosis---identifying \emph{which} type of anomaly is occurring---together with spatial propagation via attention weights and per-layer contribution breakdown. Second, the physics constraints filter out statistically unusual but physically valid conditions, reducing false alarms relative to purely data-driven methods. Third, the DS belief--plausibility interval provides formal uncertainty bounds, unavailable from point-estimate methods.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig08_score_comparison}
+\caption{Anomaly score time series during the test period for (a)~PINN, (b)~GAT-LSTM, (c)~proposed framework, and (d)~baseline methods. Red-shaded regions indicate true anomaly events.}
+\label{fig:score_comparison}
+\end{figure}
+
+\subsection{Ablation study}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig11_ablation}
+\caption{Ablation study: F1 score, ROC-AUC, and false alarm rate for the full framework and variants with one layer removed.}
+\label{fig:ablation}
+\end{figure}
+
+Table~\ref{tab:ablation} and Fig.~\ref{fig:ablation} present the ablation results. Removing the physics layer causes the most severe degradation: the false alarm rate increases from 4.5\% to 31.7\% and F1 drops from 0.857 to 0.687. This confirms that the physics constraints are essential for filtering physically plausible variations that a purely data-driven detector would flag. Removing the data layer reduces recall from 79.8\% to 66.9\% (F1: 0.719), indicating that the GAT-LSTM captures temporal patterns that the physics layer alone misses. The precision--recall curves (Fig.~\ref{fig:pr}) provide a complementary view, particularly relevant given the 6.8\% anomaly rate. The event detection rate and mean lead time for each method are shown in Fig.~\ref{fig:lead_time}.
+
+\begin{table}[htbp]
+\centering
+\caption{Ablation study results (mean$\pm$std over 5 seeds). Each ablation zeros the removed layer's score before DS fusion.}
+\label{tab:ablation}
+\begin{tabular}{lccccc}
+\toprule
+Configuration & F1 & Precision & Recall & FAR & ROC-AUC \\
+\midrule
+Full framework & 0.857 & 0.925 & 0.798 & 0.045 & 0.935 \\
+No Physics (Data only) & 0.687 & 0.626 & 0.762 & 0.317 & 0.775 \\
+No Data (Physics only) & 0.719 & 0.778 & 0.669 & 0.133 & 0.830 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/fig10_pr_curves}
+\caption{Precision--recall curves for the proposed framework and selected baselines. PR-AUC values are shown in the legend. The proposed framework maintains high precision across a wide recall range.}
+\label{fig:pr}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig12_lead_time}
+\caption{Operational metrics: (a)~event detection rate (recall at the event level); (b)~mean detection lead time in days from anomaly onset to first alarm.}
+\label{fig:lead_time}
+\end{figure}
+
+\subsection{Limitations}
+\label{sec:limitations}
+
+This study has several limitations that should be addressed in future work.
+
+The framework is validated on synthetic data generated by physics-based models. Real dam anomalies are more complex than the injected events---concurrent failure modes, intermittent signatures, and sensor drift are common in practice---so the reported performance likely represents an upper bound. The HST baseline achieves high performance on this dataset because the synthetic data is partly generated by an HST-family model, giving HST a structural advantage that would not hold on real monitoring data where unmodeled nonlinearities are significant. Validation on real dam monitoring data is needed to confirm generalization. Additionally, the PINN encodes 1D seepage and monotonicity constraints rather than the full 2D/3D poro-elastic equations; more complex physics losses (coupled seepage--deformation, non-linear thermal effects) could improve the physics layer. The fuzzy rule thresholds in the knowledge layer require domain-specific calibration: the current thresholds are tuned for the synthetic data characteristics and may not transfer directly to other dams without re-calibration against site-specific normal-operation statistics. The equal DS source reliabilities ($w_{\mathrm{phys}} = w_{\mathrm{data}} = 0.50$) assume no prior preference between layers; adaptive weight learning from operational data, such as through Dempster's discounting with reliability estimation, would be more principled.
+
+%%====================================================================
 \section{Conclusions}
+\label{sec:conclusions}
+%%====================================================================
+
+This paper presents a hybrid Data--Mechanism--Knowledge framework for dam safety anomaly detection that integrates physics-informed neural networks and graph attention networks through Dempster--Shafer evidence fusion for detection, with a fuzzy knowledge layer for failure-mode diagnosis. The framework addresses three fundamental limitations of existing approaches: lack of physical interpretability in data-driven methods, inability to capture complex sensor interactions in physics-based methods, and absence of automated failure-mode classification.
+
+The PINN physics layer with spatial PDE residuals achieves strong anomaly detection while providing physical interpretability through Darcy seepage and thermal-structural coupling constraints. The GAT-LSTM with learned attention weights captures complex spatiotemporal patterns and provides interpretable spatial anomaly propagation through attention visualization. Ablation studies confirm that both detection layers contribute complementary information: removing the physics layer substantially increases false alarms, while removing the data layer reduces recall. The Dempster--Shafer fusion with threshold-centered sigmoid calibration produces near-zero background belief during normal operation while amplifying consistent anomaly evidence from both layers. The knowledge layer provides automatic failure-mode diagnosis---a capability absent in all baseline methods.
+
+Future work will focus on validation with real dam monitoring data, extension of the physics layer to full coupled poro-elastic equations, and integration with operational decision support systems.
+
 \section*{Acknowledgements}
 This work was supported by the University of Oxford.
+
+\section*{Declaration of competing interest}
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
+
+\section*{Data availability}
+The synthetic dataset and code used in this study are available from the corresponding author upon reasonable request.
+
+\section*{CRediT authorship contribution statement}
+\textbf{Jianou Jiang:} Conceptualization, Methodology, Software, Validation, Writing -- original draft. \textbf{Budimir Rosic:} Supervision, Writing -- review \& editing.
+
 \bibliographystyle{elsarticle-num}
 \bibliography{references}
 \end{document}

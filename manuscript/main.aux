@@ -1,0 +1,164 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
+\HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
+\global\let\oldcontentsline\contentsline
+\gdef\contentsline#1#2#3#4{\oldcontentsline{#1}{#2}{#3}}
+\global\let\oldnewlabel\newlabel
+\gdef\newlabel#1#2{\newlabelxx{#1}#2}
+\gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
+\AtEndDocument{\ifx\hyper@anchor\@undefined
+\let\contentsline\oldcontentsline
+\let\newlabel\oldnewlabel
+\fi}
+\fi}
+\global\let\hyper@last\relax 
+\gdef\HyperFirstAtBeginDocument#1{#1}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\emailauthor{jianou.jiang@eng.ox.ac.uk}{Jianou Jiang\corref {cor1}}
+\emailauthor{budimir.rosic@eng.ox.ac.uk}{Budimir Rosic}
+\Newlabel{cor1}{1}
+\Newlabel{ox}{a}
+\Newlabel{ox2}{b}
+\citation{ICOLD2018}
+\citation{li2020review}
+\citation{mata2011interpretation}
+\citation{salazar2017empirical,salazar2015data}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{2}{section.1}\protected@file@percent }
+\newlabel{sec:intro}{{1}{2}{Introduction}{section.1}{}}
+\citation{hochreiter1997long}
+\citation{chen2021deep}
+\citation{zhang2023physics,bao2021machine}
+\citation{raissi2019physics,karniadakis2021physics}
+\citation{bear1972dynamics}
+\citation{biot1941general}
+\citation{haghighat2021physics}
+\citation{kipf2017semi}
+\citation{li2020graph}
+\citation{velickovic2018graph}
+\citation{tong2023dam}
+\citation{su2011study,ICOLD2018}
+\citation{su2011study}
+\citation{shafer1976mathematical,dempster1968generalization}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Methodology}{5}{section.2}\protected@file@percent }
+\newlabel{sec:methodology}{{2}{5}{Methodology}{section.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Framework architecture: monitoring data feeds three parallel layers. The PINN physics layer and GAT-LSTM data layer are fused via Dempster--Shafer evidence combination for anomaly detection. The knowledge layer provides post-hoc failure-mode diagnosis (dashed arrow) for detected anomalies.}}{6}{figure.1}\protected@file@percent }
+\newlabel{fig:framework}{{1}{6}{Framework architecture: monitoring data feeds three parallel layers. The PINN physics layer and GAT-LSTM data layer are fused via Dempster--Shafer evidence combination for anomaly detection. The knowledge layer provides post-hoc failure-mode diagnosis (dashed arrow) for detected anomalies}{figure.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Problem formulation}{6}{subsection.2.1}\protected@file@percent }
+\newlabel{sec:problem}{{2.1}{6}{Problem formulation}{subsection.2.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Sensor network configuration: (a)\nobreakspace  {}spatial layout of 30 sensors across three monoliths with displacement (triangles), piezometer (squares), and temperature (circles) sensors; (b)\nobreakspace  {}weighted adjacency matrix encoding structural connectivity and elevation proximity.}}{7}{figure.2}\protected@file@percent }
+\newlabel{fig:sensor_network}{{2}{7}{Sensor network configuration: (a)~spatial layout of 30 sensors across three monoliths with displacement (triangles), piezometer (squares), and temperature (circles) sensors; (b)~weighted adjacency matrix encoding structural connectivity and elevation proximity}{figure.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Physics layer: PINN with spatial PDE residuals}{7}{subsection.2.2}\protected@file@percent }
+\newlabel{sec:pinn}{{2.2}{7}{Physics layer: PINN with spatial PDE residuals}{subsection.2.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.1}Network architecture}{8}{subsubsection.2.2.1}\protected@file@percent }
+\newlabel{eq:pinn_forward}{{1}{8}{Network architecture}{equation.2.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.2}Physics loss: seepage}{8}{subsubsection.2.2.2}\protected@file@percent }
+\newlabel{eq:darcy}{{2}{8}{Physics loss: seepage}{equation.2.2}{}}
+\newlabel{eq:seepage_loss}{{3}{9}{Physics loss: seepage}{equation.2.3}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.3}Physics loss: displacement}{9}{subsubsection.2.2.3}\protected@file@percent }
+\newlabel{eq:disp_loss}{{4}{9}{Physics loss: displacement}{equation.2.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.4}Physics loss: temperature}{9}{subsubsection.2.2.4}\protected@file@percent }
+\newlabel{eq:temp_loss}{{5}{9}{Physics loss: temperature}{equation.2.5}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.5}Training and anomaly scoring}{9}{subsubsection.2.2.5}\protected@file@percent }
+\newlabel{eq:pinn_total}{{6}{9}{Training and anomaly scoring}{equation.2.6}{}}
+\citation{velickovic2018graph}
+\newlabel{eq:pinn_score}{{7}{10}{Training and anomaly scoring}{equation.2.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Data layer: GAT-LSTM}{10}{subsection.2.3}\protected@file@percent }
+\newlabel{sec:gatlstm}{{2.3}{10}{Data layer: GAT-LSTM}{subsection.2.3}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.1}Graph attention mechanism}{10}{subsubsection.2.3.1}\protected@file@percent }
+\newlabel{eq:gat_attention}{{8}{10}{Graph attention mechanism}{equation.2.8}{}}
+\newlabel{eq:gat_softmax}{{9}{10}{Graph attention mechanism}{equation.2.9}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.3.2}Temporal modeling}{11}{subsubsection.2.3.2}\protected@file@percent }
+\newlabel{eq:lstm}{{10}{11}{Temporal modeling}{equation.2.10}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Knowledge layer: fuzzy failure-mode diagnosis}{11}{subsection.2.4}\protected@file@percent }
+\newlabel{sec:knowledge}{{2.4}{11}{Knowledge layer: fuzzy failure-mode diagnosis}{subsection.2.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.1}Failure-mode signatures}{11}{subsubsection.2.4.1}\protected@file@percent }
+\citation{shafer1976mathematical,dempster1968generalization}
+\@writefile{toc}{\contentsline {paragraph}{Piping (internal erosion via seepage):}{12}{section*.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Differential settlement:}{12}{section*.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Thermal cracking:}{12}{section*.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Uplift pressure increase:}{12}{section*.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Drainage curtain degradation:}{12}{section*.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.4.2}Fuzzy scoring}{12}{subsubsection.2.4.2}\protected@file@percent }
+\newlabel{eq:knowledge_score}{{11}{12}{Fuzzy scoring}{equation.2.11}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Dempster--Shafer evidence fusion}{12}{subsection.2.5}\protected@file@percent }
+\newlabel{sec:fusion}{{2.5}{12}{Dempster--Shafer evidence fusion}{subsection.2.5}{}}
+\citation{shafer1976mathematical}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.5.1}Frame of discernment}{13}{subsubsection.2.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.5.2}Mass function construction}{13}{subsubsection.2.5.2}\protected@file@percent }
+\newlabel{eq:calibration}{{12}{13}{Mass function construction}{equation.2.12}{}}
+\newlabel{eq:sigmoid_center}{{13}{13}{Mass function construction}{equation.2.13}{}}
+\newlabel{eq:bpa_anomalous}{{14}{14}{Mass function construction}{equation.2.14}{}}
+\newlabel{eq:bpa_normal}{{15}{14}{Mass function construction}{equation.2.15}{}}
+\newlabel{eq:bpa_uncertainty}{{16}{14}{Mass function construction}{equation.2.16}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.5.3}Dempster's rule of combination}{14}{subsubsection.2.5.3}\protected@file@percent }
+\newlabel{eq:dempster_rule}{{17}{14}{Dempster's rule of combination}{equation.2.17}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Results and Discussion}{15}{section.3}\protected@file@percent }
+\newlabel{sec:results}{{3}{15}{Results and Discussion}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Experimental setup}{15}{subsection.3.1}\protected@file@percent }
+\newlabel{sec:setup}{{3.1}{15}{Experimental setup}{subsection.3.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.1}Synthetic monitoring dataset}{15}{subsubsection.3.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.2}Sensor adjacency graph}{16}{subsubsection.3.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.3}Training configuration}{16}{subsubsection.3.1.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.4}Evaluation metrics}{17}{subsubsection.3.1.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Individual layer performance}{17}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.1}PINN physics layer}{17}{subsubsection.3.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Raw monitoring data: (a)\nobreakspace  {}reservoir water level, (b)\nobreakspace  {}crest displacement, (c)\nobreakspace  {}piezometric head, (d)\nobreakspace  {}concrete temperature. Red-shaded regions indicate injected anomaly events. Vertical lines mark the train/validation and validation/test splits.}}{18}{figure.3}\protected@file@percent }
+\newlabel{fig:raw_data}{{3}{18}{Raw monitoring data: (a)~reservoir water level, (b)~crest displacement, (c)~piezometric head, (d)~concrete temperature. Red-shaded regions indicate injected anomaly events. Vertical lines mark the train/validation and validation/test splits}{figure.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces PINN physics residual analysis: (a)\nobreakspace  {}residual score over the full monitoring period; (b)\nobreakspace  {}score distribution in the test period for normal and anomaly samples.}}{19}{figure.4}\protected@file@percent }
+\newlabel{fig:pinn_residuals}{{4}{19}{PINN physics residual analysis: (a)~residual score over the full monitoring period; (b)~score distribution in the test period for normal and anomaly samples}{figure.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.2}GAT-LSTM data layer}{20}{subsubsection.3.2.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces GAT attention weights: (a)\nobreakspace  {}average during normal operation; (b)\nobreakspace  {}average during seepage anomaly; (c)\nobreakspace  {}difference (anomaly minus normal), with red indicating increased attention and blue indicating decreased attention. Horizontal/vertical lines separate sensor types (D/P/T).}}{20}{figure.5}\protected@file@percent }
+\newlabel{fig:gat_attention}{{5}{20}{GAT attention weights: (a)~average during normal operation; (b)~average during seepage anomaly; (c)~difference (anomaly minus normal), with red indicating increased attention and blue indicating decreased attention. Horizontal/vertical lines separate sensor types (D/P/T)}{figure.5}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.3}Knowledge layer}{20}{subsubsection.3.2.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Knowledge layer rule activations during the test period. Bar colors indicate the diagnosed failure mode. Red-shaded regions are true anomaly events.}}{21}{figure.6}\protected@file@percent }
+\newlabel{fig:knowledge_activation}{{6}{21}{Knowledge layer rule activations during the test period. Bar colors indicate the diagnosed failure mode. Red-shaded regions are true anomaly events}{figure.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Dempster--Shafer fusion}{21}{subsection.3.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Dempster--Shafer fusion: (a)\nobreakspace  {}per-layer basic probability assignment (BPA) for the anomalous hypothesis; (b)\nobreakspace  {}combined belief in anomaly after DS combination.}}{22}{figure.7}\protected@file@percent }
+\newlabel{fig:fusion}{{7}{22}{Dempster--Shafer fusion: (a)~per-layer basic probability assignment (BPA) for the anomalous hypothesis; (b)~combined belief in anomaly after DS combination}{figure.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Comparison with baselines}{22}{subsection.3.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces ROC curves for all methods. The proposed framework (solid line) achieves competitive AUC while providing interpretability advantages not captured by this metric.}}{23}{figure.8}\protected@file@percent }
+\newlabel{fig:roc}{{8}{23}{ROC curves for all methods. The proposed framework (solid line) achieves competitive AUC while providing interpretability advantages not captured by this metric}{figure.8}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Anomaly detection performance on the test dataset. Stochastic methods report mean$\pm $std over 5 random seeds. Thresholds selected on the validation set (see Section\nobreakspace  {}\ref  {sec:setup}).}}{24}{table.1}\protected@file@percent }
+\newlabel{tab:results}{{1}{24}{Anomaly detection performance on the test dataset. Stochastic methods report mean$\pm $std over 5 random seeds. Thresholds selected on the validation set (see Section~\ref {sec:setup})}{table.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Ablation study}{24}{subsection.3.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Anomaly score time series during the test period for (a)\nobreakspace  {}PINN, (b)\nobreakspace  {}GAT-LSTM, (c)\nobreakspace  {}proposed framework, and (d)\nobreakspace  {}baseline methods. Red-shaded regions indicate true anomaly events.}}{25}{figure.9}\protected@file@percent }
+\newlabel{fig:score_comparison}{{9}{25}{Anomaly score time series during the test period for (a)~PINN, (b)~GAT-LSTM, (c)~proposed framework, and (d)~baseline methods. Red-shaded regions indicate true anomaly events}{figure.9}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Ablation study: F1 score, ROC-AUC, and false alarm rate for the full framework and variants with one layer removed.}}{26}{figure.10}\protected@file@percent }
+\newlabel{fig:ablation}{{10}{26}{Ablation study: F1 score, ROC-AUC, and false alarm rate for the full framework and variants with one layer removed}{figure.10}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Limitations}{26}{subsection.3.6}\protected@file@percent }
+\newlabel{sec:limitations}{{3.6}{26}{Limitations}{subsection.3.6}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Ablation study results (mean$\pm $std over 5 seeds). Each ablation zeros the removed layer's score before DS fusion.}}{27}{table.2}\protected@file@percent }
+\newlabel{tab:ablation}{{2}{27}{Ablation study results (mean$\pm $std over 5 seeds). Each ablation zeros the removed layer's score before DS fusion}{table.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Precision--recall curves for the proposed framework and selected baselines. PR-AUC values are shown in the legend. The proposed framework maintains high precision across a wide recall range.}}{27}{figure.11}\protected@file@percent }
+\newlabel{fig:pr}{{11}{27}{Precision--recall curves for the proposed framework and selected baselines. PR-AUC values are shown in the legend. The proposed framework maintains high precision across a wide recall range}{figure.11}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Operational metrics: (a)\nobreakspace  {}event detection rate (recall at the event level); (b)\nobreakspace  {}mean detection lead time in days from anomaly onset to first alarm.}}{28}{figure.12}\protected@file@percent }
+\newlabel{fig:lead_time}{{12}{28}{Operational metrics: (a)~event detection rate (recall at the event level); (b)~mean detection lead time in days from anomaly onset to first alarm}{figure.12}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Conclusions}{29}{section.4}\protected@file@percent }
+\newlabel{sec:conclusions}{{4}{29}{Conclusions}{section.4}{}}
+\bibstyle{elsarticle-num}
+\bibdata{references}
+\bibcite{ICOLD2018}{{1}{}{{}}{{}}}
+\bibcite{li2020review}{{2}{}{{}}{{}}}
+\bibcite{mata2011interpretation}{{3}{}{{}}{{}}}
+\bibcite{salazar2017empirical}{{4}{}{{}}{{}}}
+\bibcite{salazar2015data}{{5}{}{{}}{{}}}
+\bibcite{hochreiter1997long}{{6}{}{{}}{{}}}
+\bibcite{chen2021deep}{{7}{}{{}}{{}}}
+\bibcite{zhang2023physics}{{8}{}{{}}{{}}}
+\bibcite{bao2021machine}{{9}{}{{}}{{}}}
+\bibcite{raissi2019physics}{{10}{}{{}}{{}}}
+\bibcite{karniadakis2021physics}{{11}{}{{}}{{}}}
+\bibcite{bear1972dynamics}{{12}{}{{}}{{}}}
+\bibcite{biot1941general}{{13}{}{{}}{{}}}
+\bibcite{haghighat2021physics}{{14}{}{{}}{{}}}
+\bibcite{kipf2017semi}{{15}{}{{}}{{}}}
+\bibcite{li2020graph}{{16}{}{{}}{{}}}
+\bibcite{velickovic2018graph}{{17}{}{{}}{{}}}
+\bibcite{tong2023dam}{{18}{}{{}}{{}}}
+\bibcite{su2011study}{{19}{}{{}}{{}}}
+\bibcite{shafer1976mathematical}{{20}{}{{}}{{}}}
+\bibcite{dempster1968generalization}{{21}{}{{}}{{}}}
+\providecommand\NAT@force@numbers{}\NAT@force@numbers
+\gdef \@abspage@last{33}
